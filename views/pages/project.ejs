@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/headContent.ejs') %>
+
+<head>
+    <style rel="css/project.css"></style>
+</head>
+
+<body>
+
+    <div id="topBar"></div>
+    <canvas id="canvas"></canvas>
+
+</body>
+
+<script>
+    const canvas = document.getElementById('canvas')
+    const ctx = canvas.getContext('2d')
+
+    canvas.width = window.innerWidth * .80
+    canvas.height = window.innerHeight * .80
+</script>
+
+<script src="js//project/shapes.js"></script>
+<script src="js//project/control.js"></script>
+
+</html>
