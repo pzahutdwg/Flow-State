@@ -32,17 +32,17 @@ class Shape {
         }
     }
 
-    draw () {}
+    draw () {
+        if (this.shape = 'rect') {
+            ctx.strokeStyle = 'lightGrey'
+            ctx.strokeRect(this.x, this.y, this.w, this.h)
+        }
+    }
 }
 
 let underMouse = new Shape(Mouse.x, Mouse.y, 30, 20, 'circle')
 underMouse.followMouse = true
 
-function loop() {
-
-    if (underMouse) { underMouse.draw() }
-
-    requestAnimationFrame(loop)
+function shapes() {
+    if (underMouse) underMouse.draw()
 }
-
-requestAnimationFrame(loop)
