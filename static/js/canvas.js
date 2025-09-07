@@ -26,38 +26,49 @@ CanvasRenderingContext2D.prototype.fillPill = function (x, y, w, h) {
     this.fill()
 }
 
-CanvasRenderingContext2D.prototype.arrow = function (x1, y1, x2, y2, arrowSize) {
-    // Calculate direction
-    const dx = x2 - x1
-    const dy = y2 - y1
-    const angle = Math.atan2(dy, dx)
-    const headlen = arrowSize || 10
-    const arrowAngle = Math.PI / 6 // 30 degrees
+CanvasRenderingContext2D.prototype.arrow = function (x1, y1, x2, y2, d) {
+    // Direction vector
+    let dx = x2 - x1
+    let dy = y2 - y1
 
-    // Shaft endpoint at base of arrowhead (so arrowhead tip is at x2, y2)
-    const shaftX = x2 - headlen * Math.cos(angle)
-    const shaftY = y2 - headlen * Math.sin(angle)
+    // Length of the shaft
+    let len = Math.sqrt(dx * dx + dy * dy)
+
+    // Normalize direction vector
+    dx /= len
+    dy /= len
+
+    // Arrowhead starts d back from tip
+    let x3 = x2 - dx * d
+    let y3 = y2 - dy * d
+
+    // Perpendicular vector
+    let perpX = -dy
+    let perpY = dx
+
+    // Half-width of arrowhead base
+    let w = d / 2
+
+    // Arrowhead points
+    let x4 = x3 + perpX * w
+    let y4 = y3 + perpY * w
+
+    let x5 = x3 - perpX * w
+    let y5 = y3 - perpY * w
 
     // Draw shaft
     this.beginPath()
     this.moveTo(x1, y1)
-    this.lineTo(shaftX, shaftY)
+    this.lineTo(x3, y3)
     this.stroke()
 
-    // Arrowhead points
-    const x3 = x2 - headlen * Math.cos(angle - arrowAngle)
-    const y3 = y2 - headlen * Math.sin(angle - arrowAngle)
-
-    const x4 = x2 - headlen * Math.cos(angle + arrowAngle)
-    const y4 = y2 - headlen * Math.sin(angle + arrowAngle)
-
-    // Draw arrowhead
-    this.fillStyle = this.strokeStyle
+    // Draw head
     this.beginPath()
     this.moveTo(x2, y2)
-    this.lineTo(x3, y3)
     this.lineTo(x4, y4)
+    this.lineTo(x5, y5)
     this.closePath()
+    this.fillStyle = this.strokeStyle
     this.fill()
 }
 

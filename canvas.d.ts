@@ -21,7 +21,7 @@ interface CanvasRenderingContext2D {
      * @param {number} y1 - The starting y coordinate.
      * @param {number} x2 - The ending x coordinate.
      * @param {number} y2 - The ending y coordinate.
-     * @param {number} arrowSize - The size of the arrowhead.
+     * @param {number} d - The size of the arrowhead.
      */
-    arrow(x1: number, y1: number, x2: number, y2: number, arrowSize: number): void
+    arrow(x1: number, y1: number, x2: number, y2: number, d: number): void
 }
