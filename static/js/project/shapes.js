@@ -41,6 +41,7 @@ class Shape {
      * @param {string} [color='black'] - color of the shape's border
      * @param {string|undefined} [text] - text inside of the shape
      */
+
     constructor(x, y, w = 100, h = 80, shape = 'rect', color = 'black', text = undefined) {
 
         this.x = x
@@ -58,6 +59,10 @@ class Shape {
     }
 
     update() {
+        if (this.text) {
+            // this.text.x = 
+        }
+
         if (this.followMouse) {
             this.x = Mouse.x - this.w / 2
             this.y = Mouse.y - this.h / 2

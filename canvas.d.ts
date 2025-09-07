@@ -15,4 +15,13 @@ interface CanvasRenderingContext2D {
      * @param {number} h - The height of the pill.
      */
     fillPill(x: number, y: number, w: number, h: number): void
+    /**
+     * Draws an arrow from one point to another.
+     * @param {number} x1 - The starting x coordinate.
+     * @param {number} y1 - The starting y coordinate.
+     * @param {number} x2 - The ending x coordinate.
+     * @param {number} y2 - The ending y coordinate.
+     * @param {number} arrowSize - The size of the arrowhead.
+     */
+    arrow(x1: number, y1: number, x2: number, y2: number, arrowSize: number): void
 }
