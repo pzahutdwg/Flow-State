@@ -1,7 +1,7 @@
 let buttons = {}
 
-window.addEventListener('keydown', (e) => { buttons[e.key] = true })
-window.addEventListener('keyup', (e) => { buttons[e.key] = false })
+document.addEventListener('keydown', (e) => { buttons[e.key] = true })
+document.addEventListener('keyup', (e) => { buttons[e.key] = false })
 
 let Mouse = {
     x: 0,
@@ -15,3 +15,5 @@ window.addEventListener('mousemove', (e) => {
     Mouse.x = e.clientX
     Mouse.y = e.clientY
 })
+
+document.addEventListener('click', () => { Mouse.click = true })

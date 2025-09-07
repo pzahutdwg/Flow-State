@@ -3,7 +3,8 @@
 <%- include('../partials/headContent.ejs') %>
 
 <head>
-    <style rel="css/project.css"></style>
+    <link rel="css/project.css">
+    </link>
 </head>
 
 <body>
@@ -13,18 +14,13 @@
 
 </body>
 
-<script>
-    const canvas = document.getElementById('canvas')
-    const ctx = canvas.getContext('2d')
+<script src="js/canvas.js"></script>
 
-    canvas.width = window.innerWidth * .80
-    canvas.height = window.innerHeight * .80
-</script>
-
+<script src="js/project/settings.js"></script>
 <script src="js/project/control.js"></script>
 
 <script src="js/project/shapes.js"></script>
 
-<sxript src="js/project/project.js"></script>
+<script src="js/project/main.js"></script>
 
 </html>

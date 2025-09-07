@@ -1,15 +1,47 @@
-class Text {
-    constructor(text='Click to add text', color='black', size=12) {
+class TextBox {
+    constructor(x, y, text = 'Click to add text', color = 'black', size = 12, maxw = Infinity) {
+
+        this.x = x
+        this.y = y
+        this.maxw = maxw
+
         this.text = text
         this.color = color
         this.size = size
+
+        this.edit = false
     }
 
-    draw() {}
+    getMetrics() {
+        ctx.font = `${size}px Arial`
+        return ctx.measureText(this.text)
+    }
+
+    update() { }
+
+    draw() {
+        ctx.font = `${this.size}px Arial`
+        ctx.fillStyle = this.color
+
+        ctx.fillText(this.text, this.x, this.y, this.maxw)
+    }
 }
 
+let hoverColor = 'rgb(145, 145, 145)'
+
+
 class Shape {
-    constructor(x, y, w=30, h=20, shape='rect', color='black', text='Click to add text') {
+    /**
+     * A piece of the flowchart, like input or a method.
+     * @param {number} x - x position
+     * @param {number} y - y position
+     * @param {number} [w=100] - width
+     * @param {number} [h=80] - height
+     * @param {string} [shape='rect'] - shape
+     * @param {string} [color='black'] - color of the shape's border
+     * @param {string|undefined} [text] - text inside of the shape
+     */
+    constructor(x, y, w = 100, h = 80, shape = 'rect', color = 'black', text = undefined) {
 
         this.x = x
         this.y = y
@@ -20,7 +52,7 @@ class Shape {
         this.shape = shape
         this.color = color // Border & text color
 
-        this.text = new Text(text, color)
+        this.text = new TextBox(0, 0, text, color, undefined, this.w - Settings.globalTextPadding * 2)
 
         this.followMouse = false
     }
@@ -29,20 +61,51 @@ class Shape {
         if (this.followMouse) {
             this.x = Mouse.x - this.w / 2
             this.y = Mouse.y - this.h / 2
+
+            if (Mouse.click) {
+                this.followMouse = false
+            }
         }
     }
 
-    draw () {
-        if (this.shape = 'rect') {
-            ctx.strokeStyle = 'lightGrey'
-            ctx.strokeRect(this.x, this.y, this.w, this.h)
+    draw() {
+        if (this.followMouse) {
+            ctx.strokeStyle = hoverColor
+        } else {
+            ctx.strokeStyle = this.color
         }
+
+        switch (this.shape) {
+            case 'rect':
+                ctx.strokeRect(this.x, this.y, this.w, this.h)
+                break
+
+            case 'pill':
+                ctx.strokePill(this.x, this.y, this.w, this.h)
+                break
+
+            case 'circle':
+                ctx.strokePill(this.x, this.y, this.w, this.h)
+                break
+        }
+
+        this.text.draw()
+
     }
 }
 
-let underMouse = new Shape(Mouse.x, Mouse.y, 30, 20, 'circle')
+let underMouse = new Shape(Mouse.x, Mouse.y, 150, 80, 'pill', 'black')
 underMouse.followMouse = true
 
+let updateShapes = [underMouse]
+let drawShapes = [underMouse]
+
 function shapes() {
-    if (underMouse) underMouse.draw()
+    for (let shape of updateShapes) {
+        shape.update()
+    }
+
+    for (let shape of drawShapes) {
+        shape.draw()
+    }
 }
