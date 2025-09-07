@@ -26,7 +26,7 @@ CanvasRenderingContext2D.prototype.fillPill = function (x, y, w, h) {
     this.fill()
 }
 
-CanvasRenderingContext2D.prototype.arrow = function (x1, y1, x2, y2, d) {
+CanvasRenderingContext2D.prototype.arrowTo = function (x1, y1, x2, y2, d) {
     // Direction vector
     let dx = x2 - x1
     let dy = y2 - y1
