@@ -13,11 +13,18 @@ class TextBox {
     }
 
     getMetrics() {
-        ctx.font = `${size}px Arial`
-        return ctx.measureText(this.text)
+        ctx.font = `${this.size}px Arial`
+        let metrics = ctx.measureText(this.text)
+        return {
+            width: metrics.width,
+            height: metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
+        }
     }
 
-    update() { }
+    update() {
+        this.w = this.getMetrics().width
+        this.h = this.getMetrics().height
+    }
 
     draw() {
         ctx.font = `${this.size}px Arial`
@@ -60,7 +67,10 @@ class Shape {
 
     update() {
         if (this.text) {
-            // this.text.x = 
+            this.text.update()
+            this.text.x = this.x + (this.w - this.text.w) / 2
+            this.text.y = this.y + (this.h + this.text.h) / 2
+            // console.log(this.text.text, this.x, this.y, this.w, this.h, this.text.w, this.text.h)
         }
 
         if (this.followMouse) {
@@ -94,7 +104,7 @@ class Shape {
                 break
         }
 
-        this.text.draw()
+        if(this.text) this.text.draw()
 
     }
 }
