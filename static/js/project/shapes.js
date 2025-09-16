@@ -46,10 +46,11 @@ class Shape {
      * @param {number} [h=80] - height
      * @param {string} [shape='rect'] - shape
      * @param {string} [color='black'] - color of the shape's border
+     * @param {string} [bgColor='transP'] - color of the shape's background
      * @param {string|undefined} [text] - text inside of the shape
      */
 
-    constructor(x, y, w = 100, h = 80, shape = 'rect', color = 'black', text = undefined) {
+    constructor(x, y, w = 100, h = 80, shape = 'rect', color = 'black', bgColor = 'transP', text = undefined) {
 
         this.x = x
         this.y = y
@@ -59,6 +60,7 @@ class Shape {
 
         this.shape = shape
         this.color = color // Border & text color
+        this.bgColor = bgColor
 
         this.text = new TextBox(0, 0, text, color, undefined, this.w - Settings.globalTextPadding * 2)
 
@@ -89,7 +91,22 @@ class Shape {
         } else {
             ctx.strokeStyle = this.color
         }
+        if (this.bgColor != 'transP') {
+            ctx.fillStyle = this.bgColor
+            switch (this.shape) {
+                case 'rect':
+                    ctx.fillRect(this.x, this.y, this.w, this.h)
+                    break
 
+                case 'pill':
+                    ctx.fillPill(this.x, this.y, this.w, this.h)
+                    break
+
+                case 'circle':
+                    ctx.fillPill(this.x, this.y, this.w, this.h)
+                    break
+            }
+        }
         switch (this.shape) {
             case 'rect':
                 ctx.strokeRect(this.x, this.y, this.w, this.h)
@@ -104,12 +121,12 @@ class Shape {
                 break
         }
 
-        if(this.text) this.text.draw()
+        if (this.text) this.text.draw()
 
     }
 }
 
-let underMouse = new Shape(Mouse.x, Mouse.y, 150, 80, 'pill', 'black')
+let underMouse = new Shape(Mouse.x, Mouse.y, 150, 80, 'pill', 'black', 'white')
 underMouse.followMouse = true
 
 let updateShapes = [underMouse]

@@ -9,6 +9,8 @@ function loop() {
         Mouse.click = false
     }
 
+    ctx.arrow(Mouse.x, Mouse.y, canvas.width / 2, canvas.height / 2, 5)
+
     requestAnimationFrame(loop)
 }
 
