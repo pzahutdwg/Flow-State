@@ -60,6 +60,7 @@ class TextBox {
                 currentLine = htl
             }
         }
+        lines.push(currentLine)
 
         let currentY = this.y
 
@@ -161,7 +162,7 @@ class Shape {
     }
 }
 
-let underMouse = new Shape(Mouse.x, Mouse.y, 400, 80, 'rect', 'black', 'white', 'do you ever feel like a plasticbagfloatingthrioughthewindwantingtostarta gaingoogoogagaapoghpaisueghaogsaoiugfsadogfufi guio gsae guiorsae gursae gur g twae wae gwaeoui ghpwaeoiugfh waoei pwaoei gwaoegpwaeiofyg po gf')
+let underMouse = new Shape(Mouse.x, Mouse.y, 400, 80, 'rect', 'black', 'white', 'Keyden Larosa ')
 underMouse.followMouse = true
 
 let updateShapes = [underMouse]
