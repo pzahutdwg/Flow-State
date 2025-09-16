@@ -1,5 +1,5 @@
 class TextBox {
-    constructor(x, y, text = 'Click to add text', color = 'black', size = 12, maxw = Infinity) {
+    constructor(x, y, text = 'Click to add text', color = 'black', size = 12, maxw = canvas.width) {
 
         this.x = x
         this.y = y
@@ -12,9 +12,9 @@ class TextBox {
         this.edit = false
     }
 
-    getMetrics() {
+    getMetrics(text = this.text) {
         ctx.font = `${this.size}px Arial`
-        let metrics = ctx.measureText(this.text)
+        let metrics = ctx.measureText(text)
         return {
             width: metrics.width,
             height: metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
@@ -22,7 +22,7 @@ class TextBox {
     }
 
     update() {
-        this.w = this.getMetrics().width
+        this.w = (this.maxw !== Infinity) ? this.maxw : this.getMetrics().width
         this.h = this.getMetrics().height
     }
 
@@ -30,12 +30,47 @@ class TextBox {
         ctx.font = `${this.size}px Arial`
         ctx.fillStyle = this.color
 
-        ctx.fillText(this.text, this.x, this.y, this.maxw)
+        let lines = []
+        let currentLine = ""
+        let words = this.text.split(" ")
+
+        for (let word of words) {
+            if (this.getMetrics(word).width > this.w) {
+                let currentWord = ''
+                let htWord = ''
+                for (let char of word) {
+                    htWord = currentWord + char
+                    if (this.getMetrics(htWord).width >= this.w) {
+                        words[word] = htWord
+                        break
+                    } else {
+                        currentWord = htWord
+                    }
+                }
+            }
+        }
+
+        for (let word of words) {
+            word += " "
+            let htl = currentLine + word // If you're new to the stream, htl is short for "HypoThetical Line"
+            if (this.getMetrics(htl).width > this.w) {
+                lines.push(currentLine)
+                currentLine = word
+            } else {
+                currentLine = htl
+            }
+        }
+
+        let currentY = this.y
+
+        for (let line of lines) {
+            ctx.fillText(line, this.x, currentY)
+            currentY += this.getMetrics(line).height
+        }
     }
 }
 
 let hoverColor = 'rgb(145, 145, 145)'
-
 
 class Shape {
     /**
@@ -126,7 +161,7 @@ class Shape {
     }
 }
 
-let underMouse = new Shape(Mouse.x, Mouse.y, 150, 80, 'pill', 'black', 'white')
+let underMouse = new Shape(Mouse.x, Mouse.y, 400, 80, 'rect', 'black', 'white', 'do you ever feel like a plasticbagfloatingthrioughthewindwantingtostarta gaingoogoogagaapoghpaisueghaogsaoiugfsadogfufi guio gsae guiorsae gursae gur g twae wae gwaeoui ghpwaeoiugfh waoei pwaoei gwaoegpwaeiofyg po gf')
 underMouse.followMouse = true
 
 let updateShapes = [underMouse]
