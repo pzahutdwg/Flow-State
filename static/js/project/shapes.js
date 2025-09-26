@@ -71,8 +71,6 @@ class TextBox {
     }
 }
 
-let hoverColor = 'rgb(145, 145, 145)'
-
 class Shape {
     /**
      * A piece of the flowchart, like input or a method.
@@ -123,7 +121,7 @@ class Shape {
 
     draw() {
         if (this.followMouse) {
-            ctx.strokeStyle = hoverColor
+            ctx.strokeStyle = Settings.hoverColor
         } else {
             ctx.strokeStyle = this.color
         }
@@ -162,7 +160,7 @@ class Shape {
     }
 }
 
-let underMouse = new Shape(Mouse.x, Mouse.y, 400, 80, 'rect', 'black', 'white', 'Keyden Larosa ')
+let underMouse = new Shape(...Settings.startShapeArgs)
 underMouse.followMouse = true
 
 let updateShapes = [underMouse]
