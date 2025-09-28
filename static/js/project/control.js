@@ -9,8 +9,14 @@ let Mouse = {
     y: 0,
     left: false,
     right: false,
-    click: false,
-    clickInterrupt: false
+    clickCheck: false,
+    clickInterrupt: false,
+    click() {
+        if (this.clickCheck) {
+            this.clickCheck = false
+            return true
+        }
+    }
 }
 
 window.addEventListener('mousemove', (e) => {
@@ -19,5 +25,5 @@ window.addEventListener('mousemove', (e) => {
 })
 
 document.addEventListener('mouseup', () => {
-    if(!Mouse.clickInterrupt) Mouse.click = true
+    if(!Mouse.clickInterrupt) Mouse.clickCheck = true   
 })

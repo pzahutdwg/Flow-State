@@ -3,7 +3,8 @@ let Settings = {
     globalTextPadding: 5,
     bgColor: 'white',
     hoverColor: 'rgb(145, 145, 145)',
-    startShapeArgs: [Mouse.x, Mouse.y, 400, 80, 'rect', 'black', 'white', 'Keyden Larosa ']
+    startShapeArgs: [100, 40, 'pill', 'black', 'white', 'Click to Add Text'],
+    defaultShapeArgs: [100, 40, 'rect', 'black', 'white', 'Click to Add Text']
 }
 
 // Controls all the keybinds so I can change them easily

@@ -1,5 +1,14 @@
+/*
+::::::::::: :::::::::: :::    ::: :::::::::::
+    :+:     :+:        :+:    :+:     :+:
+    +:+     +:+         +:+  +:+      +:+
+    +#+     +#++:++#     +#++:+       +#+
+    +#+     +#+         +#+  +#+      +#+
+    #+#     #+#        #+#    #+#     #+#
+    ###     ########## ###    ###     ###
+*/
 class TextBox {
-    constructor(x, y, text = 'Click to add text', color = 'black', size = 12, maxw = canvas.width) {
+    constructor(x, y, text = 'Click to add text', color = 'black', size = 8, maxw = canvas.width) {
 
         this.x = x
         this.y = y
@@ -71,6 +80,16 @@ class TextBox {
     }
 }
 
+/*
+ ::::::::  :::    :::     :::     :::::::::  ::::::::::
+:+:    :+: :+:    :+:   :+: :+:   :+:    :+: :+:
++:+        +:+    +:+  +:+   +:+  +:+    +:+ +:+
++#++:++#++ +#++:++#++ +#++:++#++: +#++:++#+  +#++:++#
+       +#+ +#+    +#+ +#+     +#+ +#+        +#+
+#+#    #+# #+#    #+# #+#     #+# #+#        #+#
+ ########  ###    ### ###     ### ###        ##########
+*/
+
 class Shape {
     /**
      * A piece of the flowchart, like input or a method.
@@ -99,6 +118,10 @@ class Shape {
         this.text = new TextBox(0, 0, text, color, undefined, this.w - Settings.globalTextPadding * 2)
 
         this.followMouse = false
+
+        updateShapes.push(this)
+        drawShapes.push(this)
+        console.log(this, updateShapes, drawShapes)
     }
 
     update() {
@@ -109,12 +132,15 @@ class Shape {
             // console.log(this.text.text, this.x, this.y, this.w, this.h, this.text.w, this.text.h)
         }
 
-        if (this.followMouse) {
+        if (this.followMouse === true) {
             this.x = Mouse.x - this.w / 2
             this.y = Mouse.y - this.h / 2
 
-            if (Mouse.click) {
+            if (Mouse.click()) {
                 this.followMouse = false
+                underMouse = new Shape(Mouse.x - this.w / 2, Mouse.x - this.w / 2, ...Settings.defaultShapeArgs)
+                underMouse.followMouse = true
+
             }
         }
     }
@@ -160,11 +186,11 @@ class Shape {
     }
 }
 
-let underMouse = new Shape(...Settings.startShapeArgs)
-underMouse.followMouse = true
+let updateShapes = []
+let drawShapes = []
 
-let updateShapes = [underMouse]
-let drawShapes = [underMouse]
+let underMouse = new Shape(Mouse.x, Mouse.y, ...Settings.startShapeArgs)
+underMouse.followMouse = true
 
 function shapes() {
     for (let shape of updateShapes) {
