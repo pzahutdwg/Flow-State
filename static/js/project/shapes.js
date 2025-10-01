@@ -115,13 +115,14 @@ class Shape {
         this.color = color // Border & text color
         this.bgColor = bgColor
 
-        this.text = new TextBox(0, 0, text, color, undefined, this.w - Settings.globalTextPadding * 2)
+        this.text = new TextBox(this.x + this.w / 2, this.y + this.h / 2, text, color, undefined, this.w - Settings.globalTextPadding * 2)
 
         this.followMouse = false
 
         updateShapes.push(this)
         drawShapes.push(this)
         console.log(this, updateShapes, drawShapes)
+        this.previous = false
     }
 
     update() {
@@ -136,8 +137,65 @@ class Shape {
             this.x = Mouse.x - this.w / 2
             this.y = Mouse.y - this.h / 2
 
+            // Snap to the nearest shape
+            if (Settings.snapDistance > 0) {
+                for (let shape of drawShapes) {
+                    if (shape != this) {
+
+                        if (Math.abs(shape.x - this.x) < Settings.snapDistance) {
+                            this.x = shape.x
+                            ctx.strokeStyle = Settings.snapColor
+                            ctx.beginPath()
+                            ctx.moveTo(this.x, this.y)
+
+                            if (shape.x + shape.w < this.x) {
+                                ctx.lineTo(shape.x + shape.w, shape.y + shape.h)
+                            } else {
+                                ctx.lineTo(shape.x, shape.y)
+                            }
+
+                            ctx.stroke()
+                        }
+
+                        if (Math.abs(shape.y - this.y) < Settings.snapDistance) {
+                            this.y = shape.y
+                            ctx.strokeStyle = Settings.snapColor
+                            ctx.beginPath()
+                            ctx.moveTo(this.x, this.y)
+
+                            if (shape.y + shape.h < this.y) {
+                                ctx.lineTo(shape.x + shape.w, shape.y + shape.h)
+                            } else {
+                                ctx.lineTo(shape.x, shape.y)
+                            }
+
+                            ctx.stroke()
+                        }
+                    }
+                }
+            }
+
             if (Mouse.click()) {
+                let foo = undefined
+                drawShapes.forEach(s => {
+                    if (s !== this && s.previous) {
+                        foo = s
+                        s.previous = false
+                    }
+                })
+                if (foo && Settings.arrowToNew && this.followMouse) {
+                    if (this.y > foo.y + foo.h) {
+                        new Arrow(foo.x + foo.w / 2, foo.y + foo.h, this.x + this.w / 2, this.y, 5)
+                    } else if (this.y + this.h < foo.y) {
+                        new Arrow(foo.x + foo.w / 2, foo.y, this.x + this.w / 2, this.y + this.h, 5)
+                    } else if (this.x > foo.x + foo.w) {
+                        new Arrow(foo.x + foo.w, foo.y + foo.h / 2, this.x, this.y + this.h / 2, 5)
+                    } else if (this.x + this.w < foo.x) {
+                        new Arrow(foo.x, foo.y + foo.h / 2, this.x + this.w, this.y + this.h / 2, 5)
+                    }
+                }
                 this.followMouse = false
+                this.previous = true
                 underMouse = new Shape(Mouse.x - this.w / 2, Mouse.x - this.w / 2, ...Settings.defaultShapeArgs)
                 underMouse.followMouse = true
 
@@ -146,11 +204,6 @@ class Shape {
     }
 
     draw() {
-        if (this.followMouse) {
-            ctx.strokeStyle = Settings.hoverColor
-        } else {
-            ctx.strokeStyle = this.color
-        }
         if (this.bgColor != 'transP') {
             ctx.fillStyle = this.bgColor
             switch (this.shape) {
@@ -166,6 +219,25 @@ class Shape {
                     ctx.fillPill(this.x, this.y, this.w, this.h)
                     break
             }
+        }
+
+        if (this.previous && Settings.arrowToNew) {
+            ctx.strokeStyle = Settings.hoverColor
+            if (underMouse.y > this.y + this.h) {
+                ctx.arrow(this.x + this.w / 2, this.y + this.h, underMouse.x + underMouse.w / 2, underMouse.y, 5)
+            } else if (underMouse.y + underMouse.h < this.y) {
+                ctx.arrow(this.x + this.w / 2, this.y, underMouse.x + underMouse.w / 2, underMouse.y + underMouse.h, 5)
+            } else if (underMouse.x > this.x + this.w) {
+                ctx.arrow(this.x + this.w, this.y + this.h / 2, underMouse.x, underMouse.y + underMouse.h / 2, 5)
+            } else if (underMouse.x + underMouse.w < this.x) {
+                ctx.arrow(this.x, this.y + this.h / 2, underMouse.x + underMouse.w, underMouse.y + underMouse.h / 2, 5)
+            }
+        }
+
+        if (this.followMouse) {
+            ctx.strokeStyle = Settings.hoverColor
+        } else {
+            ctx.strokeStyle = this.color
         }
         switch (this.shape) {
             case 'rect':
@@ -185,7 +257,44 @@ class Shape {
 
     }
 }
+/*
+    :::     :::::::::  :::::::::   ::::::::  :::       :::
+  :+: :+:   :+:    :+: :+:    :+: :+:    :+: :+:       :+:
+ +:+   +:+  +:+    +:+ +:+    +:+ +:+    +:+ +:+       +:+
++#++:++#++: +#++:++#:  +#++:++#:  +#+    +:+ +#+  +:+  +#+
++#+     +#+ +#+    +#+ +#+    +#+ +#+    +#+ +#+ +#+#+ +#+
+#+#     #+# #+#    #+# #+#    #+# #+#    #+#  #+#+# #+#+#
+###     ### ###    ### ###    ###  ########    ###   ###
+*/
+class Arrow {
+    constructor(x1, y1, x2, y2, d, color = 'black') {
+        this.x1 = x1
+        this.y1 = y1
+        this.x2 = x2
+        this.y2 = y2
+        this.d = d
+        this.color = color
+        updateShapes.push(this)
+        drawShapes.push(this)
 
+        this.length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+    }
+    update() { }
+
+    draw() {
+        ctx.strokeStyle = this.color
+        ctx.arrow(this.x1, this.y1, this.x2, this.y2, this.d)
+    }
+}
+/*
+ :::::::: ::::::::::: :::    ::: :::::::::: :::::::::        :::::::: ::::::::::: :::    ::: :::::::::: ::::::::::
+:+:    :+:    :+:     :+:    :+: :+:        :+:    :+:      :+:    :+:    :+:     :+:    :+: :+:        :+:
++:+    +:+    +:+     +:+    +:+ +:+        +:+    +:+      +:+           +:+     +:+    +:+ +:+        +:+
++#+    +:+    +#+     +#++:++#++ +#++:++#   +#++:++#:       +#++:++#++    +#+     +#+    +:+ :#::+::#   :#::+::#
++#+    +#+    +#+     +#+    +#+ +#+        +#+    +#+             +#+    +#+     +#+    +#+ +#+        +#+
+#+#    #+#    #+#     #+#    #+# #+#        #+#    #+#      #+#    #+#    #+#     #+#    #+# #+#        #+#
+ ########     ###     ###    ### ########## ###    ###       ########     ###      ########  ###        ###
+*/
 let updateShapes = []
 let drawShapes = []
 
