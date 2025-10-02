@@ -1,4 +1,24 @@
 /*
+:::::::::: :::        :::::::::: ::::    ::::  :::::::::: ::::    ::: :::::::::::
+:+:        :+:        :+:        +:+:+: :+:+:+ :+:        :+:+:   :+:     :+:
++:+        +:+        +:+        +:+ +:+:+ +:+ +:+        :+:+:+  +:+     +:+
++#++:++#   +#+        +#++:++#   +#+  +:+  +#+ +#++:++#   +#+ +:+ +#+     +#+
++#+        +#+        +#+        +#+       +#+ +#+        +#+  +#+#+#     +#+
+#+#        #+#        #+#        #+#       #+# #+#        #+#   #+#+#     #+#
+########## ########## ########## ###       ### ########## ###    ####     ###
+*/
+class Element {
+    constructor(){}
+
+    remove() {
+        const updateIndex = updateShapes.indexOf(this)
+        if (updateIndex !== -1) updateShapes.splice(updateIndex, 1)
+        const drawIndex = drawShapes.indexOf(this)
+        if (drawIndex !== -1) drawShapes.splice(drawIndex, 1)
+    }
+}
+
+/*
 ::::::::::: :::::::::: :::    ::: :::::::::::
     :+:     :+:        :+:    :+:     :+:
     +:+     +:+         +:+  +:+      +:+
@@ -7,9 +27,9 @@
     #+#     #+#        #+#    #+#     #+#
     ###     ########## ###    ###     ###
 */
-class TextBox {
+class TextBox extends Element {
     constructor(x, y, text = 'Click to add text', color = 'black', size = 8, maxw = canvas.width) {
-
+        super()
         this.x = x
         this.y = y
         this.maxw = maxw
@@ -90,7 +110,7 @@ class TextBox {
  ########  ###    ### ###     ### ###        ##########
 */
 
-class Shape {
+class Shape extends Element{
     /**
      * A piece of the flowchart, like input or a method.
      * @param {number} x - x position
@@ -104,7 +124,7 @@ class Shape {
      */
 
     constructor(x, y, w = 100, h = 80, shape = 'rect', color = 'black', bgColor = 'transP', text = undefined) {
-
+        super()
         this.x = x
         this.y = y
 
@@ -121,7 +141,6 @@ class Shape {
 
         updateShapes.push(this)
         drawShapes.push(this)
-        console.log(this, updateShapes, drawShapes)
         this.previous = false
     }
 
@@ -142,33 +161,41 @@ class Shape {
                 for (let shape of drawShapes) {
                     if (shape != this) {
 
+                        // Snap X
                         if (Math.abs(shape.x - this.x) < Settings.snapDistance) {
                             this.x = shape.x
                             ctx.strokeStyle = Settings.snapColor
                             ctx.beginPath()
+                            // Draw line from top-left corner of this shape to top-left corner of target shape
                             ctx.moveTo(this.x, this.y)
-
-                            if (shape.x + shape.w < this.x) {
-                                ctx.lineTo(shape.x + shape.w, shape.y + shape.h)
-                            } else {
-                                ctx.lineTo(shape.x, shape.y)
-                            }
-
+                            ctx.lineTo(shape.x, shape.y)
+                            ctx.stroke()
+                        } else if (Math.abs((shape.x + shape.w) - (this.x + this.w)) < Settings.snapDistance) {
+                            this.x = shape.x + shape.w - this.w
+                            ctx.strokeStyle = Settings.snapColor
+                            ctx.beginPath()
+                            // Draw line from bottom-right corner of this shape to bottom-right corner of target shape
+                            ctx.moveTo(this.x + this.w, this.y + this.h)
+                            ctx.lineTo(shape.x + shape.w, shape.y + shape.h)
                             ctx.stroke()
                         }
 
+                        // Snap Y
                         if (Math.abs(shape.y - this.y) < Settings.snapDistance) {
                             this.y = shape.y
                             ctx.strokeStyle = Settings.snapColor
                             ctx.beginPath()
+                            // Draw line from top-left corner of this shape to top-left corner of target shape
                             ctx.moveTo(this.x, this.y)
-
-                            if (shape.y + shape.h < this.y) {
-                                ctx.lineTo(shape.x + shape.w, shape.y + shape.h)
-                            } else {
-                                ctx.lineTo(shape.x, shape.y)
-                            }
-
+                            ctx.lineTo(shape.x, shape.y)
+                            ctx.stroke()
+                        } else if (Math.abs((shape.y + shape.h) - (this.y + this.h)) < Settings.snapDistance) {
+                            this.y = shape.y + shape.h - this.h
+                            ctx.strokeStyle = Settings.snapColor
+                            ctx.beginPath()
+                            // Draw line from bottom-right corner of this shape to bottom-right corner of target shape
+                            ctx.moveTo(this.x + this.w, this.y + this.h)
+                            ctx.lineTo(shape.x + shape.w, shape.y + shape.h)
                             ctx.stroke()
                         }
                     }
@@ -221,7 +248,7 @@ class Shape {
             }
         }
 
-        if (this.previous && Settings.arrowToNew) {
+        if (this.previous && Settings.arrowToNew && underMouse) {
             ctx.strokeStyle = Settings.hoverColor
             if (underMouse.y > this.y + this.h) {
                 ctx.arrow(this.x + this.w / 2, this.y + this.h, underMouse.x + underMouse.w / 2, underMouse.y, 5)
@@ -239,6 +266,7 @@ class Shape {
         } else {
             ctx.strokeStyle = this.color
         }
+        
         switch (this.shape) {
             case 'rect':
                 ctx.strokeRect(this.x, this.y, this.w, this.h)
@@ -266,8 +294,9 @@ class Shape {
 #+#     #+# #+#    #+# #+#    #+# #+#    #+#  #+#+# #+#+#
 ###     ### ###    ### ###    ###  ########    ###   ###
 */
-class Arrow {
+class Arrow extends Element {
     constructor(x1, y1, x2, y2, d, color = 'black') {
+        super()
         this.x1 = x1
         this.y1 = y1
         this.x2 = x2
@@ -302,6 +331,10 @@ let underMouse = new Shape(Mouse.x, Mouse.y, ...Settings.startShapeArgs)
 underMouse.followMouse = true
 
 function shapes() {
+    if (Mouse.click('right') && underMouse) {
+        underMouse.remove()
+        underMouse = null
+    }
     for (let shape of updateShapes) {
         shape.update()
     }

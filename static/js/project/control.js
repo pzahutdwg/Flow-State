@@ -11,11 +11,18 @@ let Mouse = {
     right: false,
     clickCheck: false,
     clickInterrupt: false,
-    click() {
-        if (this.clickCheck) {
-            this.clickCheck = false
+    click(side = 'left') {
+        if (side == 'left' && this.left) {
+            if (this.clickCheck) {
+                this.clickCheck = false
+                this.left = false
+                return true
+            }
+        } else if (side == 'right' && this.right) {
+            this.right = false
             return true
         }
+        return false
     }
 }
 
@@ -24,6 +31,12 @@ window.addEventListener('mousemove', (e) => {
     Mouse.y = e.clientY - canvas.getBoundingClientRect().top
 })
 
-document.addEventListener('mouseup', () => {
-    if(!Mouse.clickInterrupt) Mouse.clickCheck = true   
+document.addEventListener('mouseup', (e) => {
+    console.log(e.button)
+    if (e.button == 0 && !Mouse.clickInterrupt) {
+        Mouse.clickCheck = true
+        Mouse.left = true
+    } else if (e.button == 2 && !Mouse.clickInterrupt) {
+        Mouse.right = true
+    }
 })
