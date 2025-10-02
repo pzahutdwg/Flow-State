@@ -8,13 +8,17 @@
 ########## ########## ########## ###       ### ########## ###    ####     ###
 */
 class Element {
-    constructor(){}
+    constructor() { }
 
     remove() {
         const updateIndex = updateShapes.indexOf(this)
         if (updateIndex !== -1) updateShapes.splice(updateIndex, 1)
         const drawIndex = drawShapes.indexOf(this)
         if (drawIndex !== -1) drawShapes.splice(drawIndex, 1)
+    }
+
+    hover() {
+        return Mouse.x >= this.x && Mouse.x <= this.x + this.w && Mouse.y >= this.y && Mouse.y <= this.y + this.h;
     }
 }
 
@@ -110,7 +114,7 @@ class TextBox extends Element {
  ########  ###    ### ###     ### ###        ##########
 */
 
-class Shape extends Element{
+class Shape extends Element {
     /**
      * A piece of the flowchart, like input or a method.
      * @param {number} x - x position
@@ -266,7 +270,7 @@ class Shape extends Element{
         } else {
             ctx.strokeStyle = this.color
         }
-        
+
         switch (this.shape) {
             case 'rect':
                 ctx.strokeRect(this.x, this.y, this.w, this.h)
