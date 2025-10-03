@@ -312,10 +312,12 @@ class Shape extends Element {
         if (this.followMouse) {
             ctx.strokeStyle = Settings.hoverColor
         } else {
-            if (this.hover() && !underMouse) {
-                ctx.strokeStyle = Settings.mouseOverColor
-            } else if (this.selected) {
+            if (this.selected) {
                 ctx.strokeStyle = Settings.selectedColor
+            } else if (this.hover() && !underMouse) {
+                ctx.strokeStyle = Settings.mouseOverColor
+            } else {
+                ctx.strokeStyle = this.color
             }
         }
 
