@@ -18,7 +18,31 @@ class Element {
     }
 
     hover() {
-        return Mouse.x >= this.x && Mouse.x <= this.x + this.w && Mouse.y >= this.y && Mouse.y <= this.y + this.h;
+        if (this.shape && this.shape == 'pill') {
+            const rx = this.x + this.w / 2;
+            const ry = this.y + this.h / 2;
+            const r = Math.min(this.w, this.h) / 2;
+            return (
+                Mouse.x >= this.x &&
+                Mouse.x <= this.x + this.w &&
+                Mouse.y >= this.y &&
+                Mouse.y <= this.y + this.h &&
+                (
+                    // Left circle
+                    ((Mouse.x - (this.x + r)) ** 2 + (Mouse.y - ry) ** 2 <= r ** 2) ||
+                    // Right circle
+                    ((Mouse.x - (this.x + this.w - r)) ** 2 + (Mouse.y - ry) ** 2 <= r ** 2) ||
+                    // Middle rectangle
+                    (Mouse.x >= this.x + r && Mouse.x <= this.x + this.w - r)
+                )
+            );
+        } else {
+            return Mouse.x >= this.x && Mouse.x <= this.x + this.w && Mouse.y >= this.y && Mouse.y <= this.y + this.h;
+        }
+    }
+
+    clickedOn(side = 'left') {
+        return this.hover() && Mouse.click(side)
     }
 }
 
@@ -145,7 +169,9 @@ class Shape extends Element {
 
         updateShapes.push(this)
         drawShapes.push(this)
+
         this.previous = false
+        this.selected = false
     }
 
     update() {
@@ -231,6 +257,10 @@ class Shape extends Element {
                 underMouse.followMouse = true
 
             }
+        } else if (!underMouse) {
+            if (this.hover()) {
+                // console.log(this.x, this.y)
+            }
         }
     }
 
@@ -268,7 +298,7 @@ class Shape extends Element {
         if (this.followMouse) {
             ctx.strokeStyle = Settings.hoverColor
         } else {
-            ctx.strokeStyle = this.color
+            ctx.strokeStyle = !underMouse && this.hover() ? Settings.mouseOverColor : this.color
         }
 
         switch (this.shape) {
@@ -335,7 +365,7 @@ let underMouse = new Shape(Mouse.x, Mouse.y, ...Settings.startShapeArgs)
 underMouse.followMouse = true
 
 function shapes() {
-    if (Mouse.click('right') && underMouse) {
+    if ((Mouse.click('right') || keyDown('leaveAutoShape')) && underMouse) {
         underMouse.remove()
         underMouse = null
     }

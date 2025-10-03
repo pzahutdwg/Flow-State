@@ -1,7 +1,7 @@
-let buttons = {}
+let keys = {}
 
-document.addEventListener('keydown', (e) => { buttons[e.key] = true })
-document.addEventListener('keyup', (e) => { buttons[e.key] = false })
+document.addEventListener('keydown', (e) => { keys[e.key] = true })
+document.addEventListener('keyup', (e) => { keys[e.key] = false })
 document.addEventListener('contextmenu', (e) => { e.preventDefault() })
 
 let Mouse = {
