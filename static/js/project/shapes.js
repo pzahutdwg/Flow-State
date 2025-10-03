@@ -173,7 +173,13 @@ class Shape extends Element {
         this.previous = false
         this.selected = false
     }
-
+    /*
+              #      #
+    # # ### ###  ## ### ###
+    # # # # # # # #  #  ##
+    ### ### ### ###  ## ###
+        #
+    */
     update() {
         if (this.text) {
             this.text.update()
@@ -258,12 +264,20 @@ class Shape extends Element {
 
             }
         } else if (!underMouse) {
-            if (this.hover()) {
-                // console.log(this.x, this.y)
+            if (this.clickedOn() && !this.selected) {
+                updateShapes.forEach(s => { s.selected = false })
+                this.selected = true
+            } else if (this.clickedOn() && this.selected) {
+                this.selected = false
             }
         }
     }
-
+    /*
+      #
+    ### ###  ## # #
+    # # #   # # ###
+    ### #   ### ###
+    */
     draw() {
         if (this.bgColor != 'transP') {
             ctx.fillStyle = this.bgColor
@@ -298,7 +312,11 @@ class Shape extends Element {
         if (this.followMouse) {
             ctx.strokeStyle = Settings.hoverColor
         } else {
-            ctx.strokeStyle = !underMouse && this.hover() ? Settings.mouseOverColor : this.color
+            if (this.hover() && !underMouse) {
+                ctx.strokeStyle = Settings.mouseOverColor
+            } else if (this.selected) {
+                ctx.strokeStyle = Settings.selectedColor
+            }
         }
 
         switch (this.shape) {

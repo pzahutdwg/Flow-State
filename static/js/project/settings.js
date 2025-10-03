@@ -8,7 +8,8 @@ let Settings = {
     arrowToNew: true, // Draw an arrow from the last created shape to the new one?
     snapDistance: 20, // Distance in pixels to snap to other shapes when moving
     snapColor: 'rgba(255, 17, 69, 0.53)', // Color of the snap guide lines
-    mouseOverColor: 'rgba(51, 116, 236, 1)'
+    mouseOverColor: 'rgba(51, 116, 236, 1)',
+    selectedColor: 'rgba(0, 54, 153, 1)'
 }
 
 // Keybinds
