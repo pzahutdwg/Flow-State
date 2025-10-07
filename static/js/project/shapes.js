@@ -191,7 +191,12 @@ class Shape extends Element {
         if (this.followMouse === true) {
             this.x = Mouse.x - this.w / 2
             this.y = Mouse.y - this.h / 2
-
+            /*
+             ## ##   ## ###
+             #  # # # # # #
+            ##  # # ### ###
+                        #
+            */
             // Snap to the nearest shape
             if (Settings.snapDistance > 0) {
                 for (let shape of drawShapes) {
@@ -221,7 +226,7 @@ class Shape extends Element {
                             this.y = shape.y
                             ctx.strokeStyle = Settings.snapColor
                             ctx.beginPath()
-                            // Draw line from top-left corner of this shape to top-left corner of target shape
+                            // Draw line from top-left corner of this shape to top-right corner of target shape
                             ctx.moveTo(this.x, this.y)
                             ctx.lineTo(shape.x, shape.y)
                             ctx.stroke()
